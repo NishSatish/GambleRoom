@@ -1,3 +1,5 @@
+# GambleRoom
+
 A live gambling-room simulation with web sockets and JS.
 A creator hosts an event, and people join in and bet on the odds of the outcomes of the event.
 
