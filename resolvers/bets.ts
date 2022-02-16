@@ -1,4 +1,13 @@
-import { Arg, Float, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Float,
+  Mutation,
+  Query,
+  Resolver,
+  Subscription,
+  PubSub,
+  PubSubEngine,
+} from "type-graphql";
 
 import { Bet, Event, EventInput } from "../src/types";
 
@@ -7,18 +16,22 @@ export class BetsResolver {
   private events: Event[] = [];
   private bets: Bet[] = [];
 
-  @Query(() => [Event])
+  @Subscription(() => [Event], {
+    topics: "EventChanges",
+  })
   async getEvent() {
     return this.events;
   }
 
   @Mutation(() => Event)
   async createEvent(
-    @Arg("eventInput") { predictionA, predictionB, title }: EventInput
+    @Arg("eventInput") { predictionA, predictionB, title }: EventInput,
+    @PubSub() pubsub: PubSubEngine
   ) {
     const event = new Event(predictionA, predictionB, title);
 
     this.events.push(event);
+    pubsub.publish("EventChanges", {});
 
     return event;
   }
@@ -28,7 +41,8 @@ export class BetsResolver {
     @Arg("betValue") bet: number,
     @Arg("userId") user: string,
     @Arg("eventId") event: string,
-    @Arg("pool") pool: string
+    @Arg("pool") pool: "A" | "B",
+    @PubSub() pubsub: PubSubEngine
   ) {
     const eventToBet = this.events.find((eve) => eve.id === event)!;
     const betBelongsToUser = this.bets.find(
@@ -41,9 +55,11 @@ export class BetsResolver {
       betBelongsToUser.pool === "A"
         ? (eventToBet.Apool += bet)
         : (eventToBet.Bpool += bet);
+      pubsub.publish("EventChanges", {});
       const myBetPercent =
-        betBelongsToUser.totalBet /
-        (pool === "A" ? eventToBet.Apool : eventToBet.Bpool);
+        (betBelongsToUser.totalBet /
+          (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
+        100;
       return myBetPercent;
     }
 
@@ -53,6 +69,7 @@ export class BetsResolver {
     newBet.pool === "A"
       ? (eventToBet.Apool += newBet.initAmount)
       : (eventToBet.Bpool += newBet.initAmount);
+    pubsub.publish("EventChanges", {});
     newBet.totalBet += newBet.initAmount;
     const myBetPercent =
       (newBet.totalBet / (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *

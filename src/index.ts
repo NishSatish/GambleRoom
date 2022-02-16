@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { BetsResolver } from "../resolvers/hello";
+import { BetsResolver } from "../resolvers/bets";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { createServer } from "http";
 import { SubscriptionServer } from "subscriptions-transport-ws";

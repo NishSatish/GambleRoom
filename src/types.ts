@@ -34,13 +34,18 @@ export class Event {
 
 @ObjectType()
 export class Bet {
-  constructor(pool: string, amount: number, userId: string, eventId: string) {
+  constructor(
+    pool: "A" | "B",
+    amount: number,
+    userId: string,
+    eventId: string
+  ) {
     this.betPlacer = userId;
     this.pool = pool;
     this.initAmount = amount;
     this.eventId = eventId;
     this.totalBet = 0;
-    this.id = Math.random.toString();
+    this.id = Math.random().toString();
   }
 
   @Field(() => ID)
