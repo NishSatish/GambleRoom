@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "ts-watch": "tsc -w",
-    "start": "nodemon dist/src/index.js"
+    "start": "nodemon dist/src/index.js",
+    "build-js": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -18,17 +19,14 @@
   },
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
-    "@prisma/client": "^3.8.0",
     "apollo-server-core": "^3.6.3",
     "apollo-server-express": "^3.6.3",
     "class-validator": "^0.13.2",
     "express": "^4.17.2",
     "graphql": "^15.3.0",
     "graphql-fields": "^2.0.3",
-    "prisma": "^3.8.0",
     "reflect-metadata": "^0.1.13",
     "subscriptions-transport-ws": "^0.11.0",
-    "type-graphql": "^1.1.1",
-    "typegraphql-prisma": "^0.18.4"
+    "type-graphql": "^1.1.1"
   }
 }

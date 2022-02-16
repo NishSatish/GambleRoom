@@ -9,8 +9,8 @@ A creator hosts an event, and people join in and bet on the odds of the outcomes
 
   - Node (TS) + Express
   - GraphQL (TypeGraphQL)
-  - Prisma 2 (ORM)
-  - MongoDB
+  - TypeORM
+  - Postgres
   - GraphQL Subscriptions (for ws connections)
 
 - Frontend
