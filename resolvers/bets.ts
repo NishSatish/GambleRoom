@@ -9,7 +9,9 @@ import {
   PubSubEngine,
 } from "type-graphql";
 
-import { Bet, Event, EventInput } from "../src/types";
+import { EventInput } from "../entities/types";
+import { Bet } from "../entities/Bet";
+import { Event } from "../entities/Event";
 
 @Resolver()
 export class BetsResolver {
