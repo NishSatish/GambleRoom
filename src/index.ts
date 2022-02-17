@@ -3,13 +3,14 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { BetsResolver } from "../resolvers/bets";
+import { EventsResolver } from "../resolvers/events";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { createServer } from "http";
 import { SubscriptionServer } from "subscriptions-transport-ws";
 import { execute, subscribe } from "graphql";
 (async () => {
   const schema = await buildSchema({
-    resolvers: [BetsResolver],
+    resolvers: [BetsResolver, EventsResolver],
     validate: false,
   });
   const app = express();

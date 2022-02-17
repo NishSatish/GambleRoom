@@ -4,40 +4,15 @@ import {
   Mutation,
   Query,
   Resolver,
-  Subscription,
   PubSub,
   PubSubEngine,
 } from "type-graphql";
 
-import { EventInput } from "../entities/types";
 import { Bet } from "../entities/Bet";
-import { Event } from "../entities/Event";
+import { events, bets } from "./db";
 
 @Resolver()
 export class BetsResolver {
-  private events: Event[] = [];
-  private bets: Bet[] = [];
-
-  @Subscription(() => [Event], {
-    topics: "EventChanges",
-  })
-  async getEvent() {
-    return this.events;
-  }
-
-  @Mutation(() => Event)
-  async createEvent(
-    @Arg("eventInput") { predictionA, predictionB, title }: EventInput,
-    @PubSub() pubsub: PubSubEngine
-  ) {
-    const event = new Event(predictionA, predictionB, title);
-
-    this.events.push(event);
-    pubsub.publish("EventChanges", {});
-
-    return event;
-  }
-
   @Mutation(() => Float)
   async addMyBet(
     @Arg("betValue") bet: number,
@@ -46,8 +21,8 @@ export class BetsResolver {
     @Arg("pool") pool: "A" | "B",
     @PubSub() pubsub: PubSubEngine
   ) {
-    const eventToBet = this.events.find((eve) => eve.id === event)!;
-    const betBelongsToUser = this.bets.find(
+    const eventToBet = events.find((eve) => eve.id === event)!;
+    const betBelongsToUser = bets.find(
       (bet) => bet.betPlacer === user && bet.eventId === event
     );
 
@@ -67,7 +42,7 @@ export class BetsResolver {
 
     // New guy bets
     const newBet = new Bet(pool, bet, user, event);
-    this.bets.push(newBet);
+    bets.push(newBet);
     newBet.pool === "A"
       ? (eventToBet.Apool += newBet.initAmount)
       : (eventToBet.Bpool += newBet.initAmount);
@@ -81,6 +56,6 @@ export class BetsResolver {
 
   @Query(() => [Bet])
   getBets() {
-    return this.bets;
+    return bets;
   }
 }
