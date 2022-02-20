@@ -14,6 +14,9 @@ export class Event {
   id: string;
 
   @Field()
+  creator: string;
+
+  @Field()
   Apool: number = 0.0;
 
   @Field()
@@ -30,4 +33,7 @@ export class Event {
 
   @Field()
   status: "STARTED" | "ENDED" = "STARTED";
+
+  @Field()
+  winningPool: "A" | "B" | "" = "";
 }

@@ -2,10 +2,10 @@ import {
   Arg,
   Float,
   Mutation,
-  Query,
   Resolver,
   PubSub,
   PubSubEngine,
+  Query,
 } from "type-graphql";
 
 import { Bet } from "../entities/Bet";
@@ -13,6 +13,11 @@ import { events, bets } from "./db";
 
 @Resolver()
 export class BetsResolver {
+  @Query(() => [Bet])
+  async getBets() {
+    return bets;
+  }
+
   @Mutation(() => Float)
   async addMyBet(
     @Arg("betValue") bet: number,
@@ -52,10 +57,5 @@ export class BetsResolver {
       (newBet.totalBet / (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
       100;
     return myBetPercent;
-  }
-
-  @Query(() => [Bet])
-  getBets() {
-    return bets;
   }
 }

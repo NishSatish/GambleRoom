@@ -31,4 +31,17 @@ export class EventsResolver {
 
     return event;
   }
+
+  @Mutation(() => Event, { nullable: true })
+  async setEventStatus(
+    @Arg("event") eventId: string,
+    @Arg("winningPool") winningPool: "A" | "B",
+    @PubSub() pubsub: PubSubEngine
+  ) {
+    const event = events.find((event) => event.id === eventId)!;
+
+    event.winningPool = winningPool;
+    event.status = "ENDED";
+    pubsub.publish("EventChanges", {});
+  }
 }
