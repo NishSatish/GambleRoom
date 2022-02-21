@@ -38,7 +38,10 @@ export class EventsResolver {
     @Arg("winningPool") winningPool: "A" | "B",
     @PubSub() pubsub: PubSubEngine
   ) {
-    const event = events.find((event) => event.id === eventId)!;
+    const event = events.find((event) => event.id === eventId);
+    if (!event) {
+      throw new Error("Event not found");
+    }
 
     event.winningPool = winningPool;
     event.status = "ENDED";

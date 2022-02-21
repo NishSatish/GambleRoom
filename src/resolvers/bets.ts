@@ -26,7 +26,10 @@ export class BetsResolver {
     @Arg("pool") pool: "A" | "B",
     @PubSub() pubsub: PubSubEngine
   ) {
-    const eventToBet = events.find((eve) => eve.id === event)!;
+    const eventToBet = events.find((eve) => eve.id === event);
+    if (!eventToBet) {
+      throw new Error("Event not found");
+    }
     const betBelongsToUser = bets.find(
       (bet) => bet.betPlacer === user && bet.eventId === event
     );
