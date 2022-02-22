@@ -9,7 +9,7 @@ import {
 } from "type-graphql";
 
 import { Bet } from "../entities/Bet";
-import { events, bets } from "./db";
+import { events, bets, users } from "./db";
 
 @Resolver()
 export class BetsResolver {
@@ -21,22 +21,24 @@ export class BetsResolver {
   @Mutation(() => Float)
   async addMyBet(
     @Arg("betValue") bet: number,
-    @Arg("userId") user: string,
+    @Arg("userId") userId: string,
     @Arg("eventId") event: string,
     @Arg("pool") pool: "A" | "B",
     @PubSub() pubsub: PubSubEngine
   ) {
     const eventToBet = events.find((eve) => eve.id === event);
+    const user = users.find((user) => user.id === userId)!;
     if (!eventToBet) {
       throw new Error("Event not found");
     }
     const betBelongsToUser = bets.find(
-      (bet) => bet.betPlacer === user && bet.eventId === event
+      (bet) => bet.betPlacer === userId && bet.eventId === event
     );
 
     // Same guy bets again
     if (betBelongsToUser) {
       betBelongsToUser.totalBet += bet;
+      user.bank -= bet;
       betBelongsToUser.pool === "A"
         ? (eventToBet.Apool += bet)
         : (eventToBet.Bpool += bet);
@@ -45,11 +47,13 @@ export class BetsResolver {
         (betBelongsToUser.totalBet /
           (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
         100;
+      betBelongsToUser.betPercent = myBetPercent;
       return myBetPercent;
     }
 
     // New guy bets
-    const newBet = new Bet(pool, bet, user, event);
+    const newBet = new Bet(pool, bet, userId, event);
+    user.bank -= bet;
     bets.push(newBet);
     newBet.pool === "A"
       ? (eventToBet.Apool += newBet.initAmount)
@@ -59,6 +63,7 @@ export class BetsResolver {
     const myBetPercent =
       (newBet.totalBet / (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
       100;
+    newBet.betPercent = myBetPercent;
     return myBetPercent;
   }
 }

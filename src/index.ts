@@ -8,9 +8,10 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-co
 import { createServer } from "http";
 import { SubscriptionServer } from "subscriptions-transport-ws";
 import { execute, subscribe } from "graphql";
+import { UserResolver } from "./resolvers/users";
 (async () => {
   const schema = await buildSchema({
-    resolvers: [BetsResolver, EventsResolver],
+    resolvers: [BetsResolver, EventsResolver, UserResolver],
     validate: false,
   });
   const app = express();

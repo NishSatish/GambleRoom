@@ -26,11 +26,14 @@ export class Bet {
   eventId?: string;
 
   @Field(() => String)
-  pool: string;
+  pool: "A" | "B";
 
   @Field()
   initAmount: number = 0;
 
   @Field()
   totalBet: number;
+
+  @Field()
+  betPercent: number;
 }
