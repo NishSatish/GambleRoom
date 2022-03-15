@@ -13,9 +13,10 @@ import { events, bets, users } from "./db";
 
 @Resolver()
 export class BetsResolver {
+  private betsToReturn: Bet[];
   @Query(() => [Bet])
   async getBets() {
-    return bets;
+    return this.betsToReturn;
   }
 
   @Mutation(() => Float)
@@ -48,6 +49,7 @@ export class BetsResolver {
           (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
         100;
       betBelongsToUser.betPercent = myBetPercent;
+      this.recalculateBetPercents(eventToBet.Apool, eventToBet.Bpool);
       return myBetPercent;
     }
 
@@ -58,12 +60,23 @@ export class BetsResolver {
     newBet.pool === "A"
       ? (eventToBet.Apool += newBet.initAmount)
       : (eventToBet.Bpool += newBet.initAmount);
-    pubsub.publish("EventChanges", {});
+
     newBet.totalBet += newBet.initAmount;
+
     const myBetPercent =
       (newBet.totalBet / (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
       100;
     newBet.betPercent = myBetPercent;
+    this.recalculateBetPercents(eventToBet.Apool, eventToBet.Bpool);
+    pubsub.publish("EventChanges", {});
     return myBetPercent;
+  }
+
+  recalculateBetPercents(apool: number, bpool: number) {
+    this.betsToReturn = bets.map((bet) => {
+      bet.betPercent =
+        (bet.totalBet / (bet.pool === "A" ? apool : bpool)) * 100;
+      return bet;
+    });
   }
 }
