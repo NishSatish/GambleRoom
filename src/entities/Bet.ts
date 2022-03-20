@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from "type-graphql";
+import { User } from "./User";
 
 @ObjectType()
 export class Bet {
@@ -19,8 +20,8 @@ export class Bet {
   @Field(() => ID)
   id: string;
 
-  @Field(() => ID)
-  betPlacer?: string;
+  @Field(() => User)
+  betPlacer?: string | User;
 
   @Field(() => ID)
   eventId?: string;

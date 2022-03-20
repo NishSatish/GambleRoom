@@ -6,6 +6,7 @@ import {
   PubSub,
   PubSubEngine,
   Query,
+  Subscription,
 } from "type-graphql";
 
 import { Bet } from "../entities/Bet";
@@ -14,8 +15,20 @@ import { events, bets, users } from "./db";
 @Resolver()
 export class BetsResolver {
   private betsToReturn: Bet[];
+
+  recalculateBetPercents(apool: number, bpool: number) {
+    this.betsToReturn = bets.map((bet) => {
+      bet.betPercent =
+        (bet.totalBet / (bet.pool === "A" ? apool : bpool)) * 100;
+      return bet;
+    });
+  }
+
   @Query(() => [Bet])
   async getBets() {
+    this.betsToReturn.map((bet) => {
+      bet.betPlacer = users.find((user) => user.id === bet.betPlacer);
+    });
     return this.betsToReturn;
   }
 
@@ -49,7 +62,10 @@ export class BetsResolver {
           (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
         100;
       betBelongsToUser.betPercent = myBetPercent;
+
       this.recalculateBetPercents(eventToBet.Apool, eventToBet.Bpool);
+
+      pubsub.publish("MyBetPercentChanges", {});
       return myBetPercent;
     }
 
@@ -67,16 +83,24 @@ export class BetsResolver {
       (newBet.totalBet / (pool === "A" ? eventToBet.Apool : eventToBet.Bpool)) *
       100;
     newBet.betPercent = myBetPercent;
+
     this.recalculateBetPercents(eventToBet.Apool, eventToBet.Bpool);
+
     pubsub.publish("EventChanges", {});
+    pubsub.publish("MyBetPercentChanges", {});
+
     return myBetPercent;
   }
 
-  recalculateBetPercents(apool: number, bpool: number) {
-    this.betsToReturn = bets.map((bet) => {
-      bet.betPercent =
-        (bet.totalBet / (bet.pool === "A" ? apool : bpool)) * 100;
-      return bet;
-    });
+  @Subscription(() => Float, {
+    topics: "MyBetPercentChanges",
+  })
+  async getMyBetPercent(@Arg("betPlacer") betPlacer: string) {
+    const bet = bets.find((bet) => betPlacer === bet.betPlacer);
+    if (!bet) {
+      throw new Error("User's bet not found");
+    }
+
+    return bet.betPercent;
   }
 }
