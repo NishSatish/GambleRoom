@@ -20,7 +20,7 @@ export class Bet {
   @Field(() => ID)
   id: string;
 
-  @Field(() => User)
+  @Field(() => String)
   betPlacer?: string | User;
 
   @Field(() => ID)

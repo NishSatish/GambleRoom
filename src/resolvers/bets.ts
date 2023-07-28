@@ -14,7 +14,7 @@ import { events, bets, users } from "./db";
 
 @Resolver()
 export class BetsResolver {
-  private betsToReturn: Bet[];
+  private betsToReturn: Bet[] = [];
 
   recalculateBetPercents(apool: number, bpool: number) {
     this.betsToReturn = bets.map((bet) => {
@@ -26,9 +26,6 @@ export class BetsResolver {
 
   @Query(() => [Bet])
   async getBets() {
-    this.betsToReturn.map((bet) => {
-      bet.betPlacer = users.find((user) => user.id === bet.betPlacer);
-    });
     return this.betsToReturn;
   }
 
@@ -41,9 +38,9 @@ export class BetsResolver {
     @PubSub() pubsub: PubSubEngine
   ) {
     const eventToBet = events.find((eve) => eve.id === event);
-    const user = users.find((user) => user.id === userId)!;
-    if (!eventToBet) {
-      throw new Error("Event not found");
+    const user = users.find((user) => user.id === userId);
+    if (!eventToBet || !user) {
+      throw new Error("Event/User not found");
     }
     const betBelongsToUser = bets.find(
       (bet) => bet.betPlacer === userId && bet.eventId === event
