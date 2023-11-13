@@ -10,7 +10,7 @@ import {
 } from "type-graphql";
 
 import { Bet } from "../entities/Bet";
-import { events, bets, users } from "./db";
+import { events, bets, users } from "../config/db";
 
 @Resolver()
 export class BetsResolver {

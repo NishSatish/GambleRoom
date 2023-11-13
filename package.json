@@ -6,6 +6,7 @@
   "scripts": {
     "ts-watch": "tsc -w",
     "start": "nodemon dist/index.js",
+    "dev": "tsc -w && nodemon dist/index.js",
     "build-js": "tsc"
   },
   "keywords": [],
@@ -24,8 +25,10 @@
     "express": "^4.17.2",
     "graphql": "^15.3.0",
     "graphql-fields": "^2.0.3",
+    "mongodb": "^5.9.1",
     "reflect-metadata": "^0.1.13",
     "subscriptions-transport-ws": "^0.11.0",
-    "type-graphql": "^1.1.1"
+    "type-graphql": "^1.1.1",
+    "typeorm": "^0.3.17"
   }
 }

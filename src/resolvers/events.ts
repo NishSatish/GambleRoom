@@ -7,7 +7,7 @@ import {
   Resolver,
   Subscription,
 } from "type-graphql";
-import { bets, events } from "./db";
+import { bets, events, users } from "../config/db";
 import { Event } from "../entities/Event";
 import { EventInput } from "../entities/types";
 
@@ -62,5 +62,15 @@ export class EventsResolver {
       event.winningPool === "A"
         ? bets.filter((bet) => bet.pool === "A")
         : bets.filter((bet) => bet.pool === "B");
+
+    // Populate betPlacer field    
+    winningBets.forEach(bet => {
+      const betPlacer = users.find(user => user.id === bet.betPlacer)!;
+      if (bet.pool === "A") {
+        betPlacer.bank += bet.totalBet + (bet.betPercent * event.Apool / 100);
+      } else {
+        betPlacer.bank += bet.totalBet + (bet.betPercent * event.Apool / 100);
+      }
+    });
   }
 }

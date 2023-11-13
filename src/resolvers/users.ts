@@ -1,6 +1,7 @@
 import { User } from "../entities/User";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { users } from "./db";
+import { users } from "../config/db";
+import { dataManager } from "../config/db";
 
 @Resolver()
 export class UserResolver {
@@ -8,6 +9,12 @@ export class UserResolver {
   async createUser(@Arg("username") uname: string, @Arg("amount") amt: number) {
     const user = new User(uname, amt);
     users.push(user);
+
+    try {
+      await dataManager.save(user);      
+    } catch (error) {
+      throw error;
+    }
 
     return user;
   }

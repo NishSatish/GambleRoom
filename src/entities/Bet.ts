@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID } from "type-graphql";
 import { User } from "./User";
+import { Column, ObjectIdColumn } from "typeorm";
 
 @ObjectType()
 export class Bet {
@@ -17,24 +18,30 @@ export class Bet {
     this.id = Math.random().toString();
   }
 
-  @Field(() => ID)
+  @ObjectIdColumn()
   id: string;
 
+  @Column()
   @Field(() => String)
   betPlacer?: string | User;
 
+  @Column()
   @Field(() => ID)
   eventId?: string;
 
+  @Column()
   @Field(() => String)
   pool: "A" | "B";
 
+  @Column()
   @Field()
   initAmount: number = 0;
 
+  @Column()
   @Field()
   totalBet: number;
 
+  @Column()
   @Field()
   betPercent: number;
 }

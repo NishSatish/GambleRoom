@@ -2,14 +2,21 @@ import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { BetsResolver } from "./resolvers/bets";
-import { EventsResolver } from "./resolvers/events";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { createServer } from "http";
 import { SubscriptionServer } from "subscriptions-transport-ws";
 import { execute, subscribe } from "graphql";
+import { connectDataSource } from "./config/db";
+
+import { BetsResolver } from "./resolvers/bets";
+import { EventsResolver } from "./resolvers/events";
 import { UserResolver } from "./resolvers/users";
+
+
 (async () => {
+  // DATABASE CONNECTION
+  connectDataSource();
+
   const schema = await buildSchema({
     resolvers: [BetsResolver, EventsResolver, UserResolver],
     validate: false,
