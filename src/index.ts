@@ -12,6 +12,8 @@ import { BetsResolver } from "./resolvers/bets";
 import { EventsResolver } from "./resolvers/events";
 import { UserResolver } from "./resolvers/users";
 
+import "dotenv/config";
+
 
 (async () => {
   // DATABASE CONNECTION

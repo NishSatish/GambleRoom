@@ -8,8 +8,7 @@ export class UserResolver {
   @Mutation(() => User)
   async createUser(@Arg("username") uname: string, @Arg("amount") amt: number) {
     const user = new User(uname, amt);
-    users.push(user);
-
+    
     try {
       await dataManager.save(user);      
     } catch (error) {
