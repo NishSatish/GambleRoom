@@ -11,7 +11,7 @@ A creator hosts an event, and people join in and bet on the odds of the outcomes
   - GraphQL (TypeGraphQL)
   - TypeORM
   - Postgres
-  - GraphQL Subscriptions (for ws connections)
+  - GraphQL Subscriptions (for web socket connections)
 
 - Frontend
   - React
