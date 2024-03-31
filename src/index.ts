@@ -48,6 +48,6 @@ import "dotenv/config";
   await apolloServer.start();
   apolloServer.applyMiddleware({ app });
   httpServer.listen(4000, () => {
-    console.log("Server has started");
+    console.log("Server has started at 4k");
   });
 })();

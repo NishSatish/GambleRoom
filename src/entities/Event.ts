@@ -1,22 +1,25 @@
-import { ObjectType, Field } from "type-graphql";
-import { Column, ObjectIdColumn } from "typeorm";
+import { ObjectType, Field, ID } from "type-graphql";
+import { Column, Entity, ObjectId, ObjectIdColumn } from "typeorm";
+import { User } from "./User";
 
 // @Field is for type-graphql, and other decorators is for TypeORM
+@Entity()
 @ObjectType()
 export class Event {
-  constructor(predA: string, predB: string, title: string) {
+  constructor(predA: string, predB: string, title: string, creator: User) {
     this.predictionA = predA;
     this.predictionB = predB;
     this.eventTitle = title;
-    this.id = Math.random().toString();
+    this.creator = creator;
   }
 
   @ObjectIdColumn()
-  id: string;
+  @Field(() => ID)
+  _id: ObjectId;
 
-  @Column()
+  @Column((_) => User)
   @Field()
-  creator: string;
+  creator: User;
 
   @Column()
   @Field()

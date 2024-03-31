@@ -1,6 +1,5 @@
 import { User } from "../entities/User";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { users } from "../config/db";
 import { dataManager } from "../config/db";
 
 @Resolver()
@@ -20,6 +19,8 @@ export class UserResolver {
 
   @Query(() => [User])
   async getUsers() {
+    const users = await dataManager.find(User);
+    
     return users;
   }
 }

@@ -10,4 +10,7 @@ export class EventInput {
 
   @Field()
   title: string;
+
+  @Field()
+  creator: string;
 }

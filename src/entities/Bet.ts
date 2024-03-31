@@ -1,33 +1,35 @@
 import { ObjectType, Field, ID } from "type-graphql";
 import { User } from "./User";
-import { Column, ObjectIdColumn } from "typeorm";
+import { Event } from "./Event";
+import { Column, Entity, ObjectIdColumn, ObjectId as TO_ObjectId } from "typeorm";
 
+@Entity()
 @ObjectType()
 export class Bet {
   constructor(
     pool: "A" | "B",
     amount: number,
-    userId: string,
-    eventId: string
+    user: User,
+    event: Event
   ) {
-    this.betPlacer = userId;
     this.pool = pool;
     this.initAmount = amount;
-    this.eventId = eventId;
     this.totalBet = 0;
-    this.id = Math.random().toString();
+    this.betPlacer = user;
+    this.event = event;
   }
 
   @ObjectIdColumn()
-  id: string;
-
-  @Column()
-  @Field(() => String)
-  betPlacer?: string | User;
-
-  @Column()
   @Field(() => ID)
-  eventId?: string;
+  _id: TO_ObjectId;
+
+  @Column((_) => User)
+  @Field()
+  betPlacer: User;
+
+  @Column((_) => Event)
+  @Field()
+  event: Event;
 
   @Column()
   @Field(() => String)
